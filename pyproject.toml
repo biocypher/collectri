@@ -10,7 +10,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-biocypher = "^0.5.4"
+biocypher = "^0.5.33"
 
 [build-system]
 requires = ["poetry-core"]

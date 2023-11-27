@@ -1,53 +1,51 @@
-from biocypher import BioCypher
-from template_package.adapters.example_adapter import (
-    ExampleAdapter,
-    ExampleAdapterNodeType,
-    ExampleAdapterEdgeType,
-    ExampleAdapterProteinField,
-    ExampleAdapterDiseaseField,
-)
+from biocypher import BioCypher, Resource
+from collectri.adapters.collectri_adapter import CollectriAdapter
 
-# Instantiate the BioCypher interface
-# You can use `config/biocypher_config.yaml` to configure the framework or
-# supply settings via parameters below
+# ----------------------
+# Step 1: Data download and cache
+# ----------------------
+
 bc = BioCypher()
-
-# Choose node types to include in the knowledge graph.
-# These are defined in the adapter (`adapter.py`).
-node_types = [
-    ExampleAdapterNodeType.PROTEIN,
-    ExampleAdapterNodeType.DISEASE,
-]
-
-# Choose protein adapter fields to include in the knowledge graph.
-# These are defined in the adapter (`adapter.py`).
-node_fields = [
-    # Proteins
-    ExampleAdapterProteinField.ID,
-    ExampleAdapterProteinField.SEQUENCE,
-    ExampleAdapterProteinField.DESCRIPTION,
-    ExampleAdapterProteinField.TAXON,
-    # Diseases
-    ExampleAdapterDiseaseField.ID,
-    ExampleAdapterDiseaseField.NAME,
-    ExampleAdapterDiseaseField.DESCRIPTION,
-]
-
-edge_types = [
-    ExampleAdapterEdgeType.PROTEIN_PROTEIN_INTERACTION,
-    ExampleAdapterEdgeType.PROTEIN_DISEASE_ASSOCIATION,
-]
-
-# Create a protein adapter instance
-adapter = ExampleAdapter(
-    node_types=node_types,
-    node_fields=node_fields,
-    edge_types=edge_types,
-    # we can leave edge fields empty, defaulting to all fields in the adapter
+collectri = Resource(
+    name="collectri",
+    url_s="https://rescued.omnipathdb.org/CollecTRI.csv",
+    lifetime=0,  # CollecTRI is a static resource
 )
 
+paths = bc.download(collectri)
 
-# Create a knowledge graph from the adapter
+# ----------------------
+# Optional: Inspect data
+# ----------------------
+
+import pandas as pd
+
+df = pd.read_csv(paths[0])
+print(df.head())
+print(df.columns)
+
+# ----------------------
+# Step 2: Load and configure adapter
+# ----------------------
+
+adapter = CollectriAdapter(paths[0])
+
+# ----------------------
+# Optional: For prototyping, we can use the Pandas functionality
+# ----------------------
+
+bc.add(adapter.get_nodes())
+bc.add(adapter.get_edges())
+dfs = bc.to_df()
+for name, df in dfs.items():
+    print(name)
+    print(df.head())
+
+# ----------------------
+# Step 3: Write nodes and edges, import call, and summarise the run
+# ----------------------
+
+bc = BioCypher()  # reset BioCypher, otherwise we would deduplicate from previous run
 bc.write_nodes(adapter.get_nodes())
 bc.write_edges(adapter.get_edges())
 

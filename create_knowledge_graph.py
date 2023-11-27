@@ -41,13 +41,18 @@ for name, df in dfs.items():
     print(name)
     print(df.head())
 
+bc = BioCypher()
+# reset BioCypher, otherwise we would deduplicate all entities from previous run
+# this is not needed if this optional step is skipped/removed
+
 # ----------------------
 # Step 3: Write nodes and edges, import call, and summarise the run
 # ----------------------
 
-bc = BioCypher()  # reset BioCypher, otherwise we would deduplicate from previous run
 bc.write_nodes(adapter.get_nodes())
 bc.write_edges(adapter.get_edges())
+
+# TODO preferred_id is not reflected in the output
 
 # Write admin import statement
 bc.write_import_call()

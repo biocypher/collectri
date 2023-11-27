@@ -1,3 +1,4 @@
+from functools import lru_cache
 import hashlib
 import random
 import string
@@ -115,11 +116,13 @@ class CollectriAdapter:
 
         logger.info("Generating nodes.")
 
-        for node in self.genes:
-            yield BioCypherNode(node_id=node, node_label="gene", properties={})
+        for node_id in self.genes:
+            yield BioCypherNode(
+                node_id=self._prefix(node_id), node_label="gene", properties={}
+            )
 
         for _, row in self.tf_df.iterrows():
-            node = row["source"]
+            node_id = row["source"]
             category = row["TF.category"]
             properties = {}
             properties["category"] = (
@@ -133,7 +136,7 @@ class CollectriAdapter:
             )
 
             yield BioCypherNode(
-                node_id=node,
+                node_id=self._prefix(node_id),
                 node_label="transcription factor",
                 properties=properties,
             )
@@ -151,8 +154,8 @@ class CollectriAdapter:
         # one row of the dataframe represents one edge
         for _, row in self.data.iterrows():
             # extract source and target
-            source = row["source"]
-            target = row["target"]
+            source_id = row["source"]
+            target_id = row["target"]
 
             # extract edge properties
             properties = {}
@@ -184,7 +187,7 @@ class CollectriAdapter:
             # generate relationship id
             md5 = hashlib.md5(
                 "".join(
-                    [str(source), str(target)]
+                    [str(source_id), str(target_id)]
                     + [str(prop) for prop in properties.values()]
                 ).encode("utf-8")
             ).hexdigest()
@@ -192,13 +195,19 @@ class CollectriAdapter:
             # generate edge
             yield BioCypherEdge(
                 relationship_id=md5,
-                source_id=source,
-                target_id=target,
+                source_id=self._prefix(source_id),
+                target_id=self._prefix(target_id),
                 relationship_label="transcriptional regulation",
                 properties=properties,
             )
 
-    def _set_types_and_fields(self, node_types, node_fields, edge_types, edge_fields):
+    def _set_types_and_fields(
+        self,
+        node_types,
+        node_fields,
+        edge_types,
+        edge_fields,
+    ):
         if node_types:
             self.node_types = node_types
         else:
@@ -224,3 +233,7 @@ class CollectriAdapter:
             self.edge_fields = edge_fields
         else:
             self.edge_fields = [field for field in chain()]
+
+    @lru_cache(maxsize=None)
+    def _prefix(self, string):
+        return f"hgnc.symbol:{string}"

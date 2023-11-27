@@ -1,17 +1,14 @@
 gene:
     represented_as: node
     preferred_id: hgnc.symbol
-    input_label: gene
 
 transcription factor:
     is_a: gene
     represented_as: node
     preferred_id: hgnc.symbol
-    input_label: tf
 
 transcriptional regulation:
     is_a: pairwise gene to gene interaction
     represented_as: edge
     source: transcription factor
     target: gene
-    input_label: regulates

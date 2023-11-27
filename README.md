@@ -25,7 +25,9 @@ reflect your project's name and version.
 2. Find the data: the CollecTRI dataset is available as a flat file at
 https://rescued.omnipathdb.org/CollecTRI.csv. With this link, we can set up a
 BioCypher `Resource` object to [download and cache the
-data](https://biocypher.org/api.html#download-and-cache-functionality).
+data](https://biocypher.org/api.html#download-and-cache-functionality). We
+implement this and all other steps of the build pipeline in the
+`create_knowledge_graph.py` script. Check there for the full code.
 
 ```python
 bc = BioCypher()
@@ -45,9 +47,36 @@ which makes it a good example. You can find a detailed description of the
 process [below](#adapter-design) ([adapter design](#adapter-design) and [ontolgy
 mapping](#ontology-mapping)).
 
+When building the adapter, it can be helpful to use the Pandas functionality of
+BioCypher to preview the KG components. Using the `add()` and `to_df()` methods,
+we can check whether the adapter is working as expected.
+
+```python
+bc.add(adapter.get_nodes())
+bc.add(adapter.get_edges())
+dfs = bc.to_df()
+for name, df in dfs.items():
+    print(name)
+    print(df.head())
+```
+
 4. Run BioCypher to create the knowledge graph. This step is straightforward,
 using the information provided by the mapping configuration and the process
-provided by the adapter created in the previous step.
+provided by the adapter created in the previous step. For compatibility with the
+Docker compose workflow, we use the `write_nodes()` and `write_edges()` methods
+to generate CSV files for import into Neo4j, as well as the import call
+statement and a summary of the build process.
+
+```python
+bc.write_nodes(adapter.get_nodes())
+bc.write_edges(adapter.get_edges())
+
+# Write admin import statement
+bc.write_import_call()
+
+# Print summary
+bc.summary()
+```
 
 ## Adapter design
 
@@ -77,17 +106,33 @@ enriched by the curation information contained in the table.
 
 We use Enums to define the types of nodes and edges and their properties. This
 helps in organising the process and also allows the use of auto-completion in
-downstream tasks.
+downstream tasks. We have two node types, `gene` and `transcription factor`, and
+one relationship type, `transcriptional regulation`. We also define the
+properties of the nodes and edges, which are none for genes, `category` for
+transcription factors, and `weight`, `resources`, `references`, and
+`sign.decision` for the relationship.
+
+The adapter then uses the `pandas` library to read the dataset and extract the
+relevant information. We use the `_preprocess_data()` method to load the
+dataframe and extract unique genes and TFs. Since each row of the dataset is one
+relationship, we can simply iterate over the rows to create the relationships
+directly.
+
+The last component the adapter needs is two public methods, `get_nodes()` and
+`get_edges()`, which return generators of nodes and edges, respectively. These
+methods are used in the build script (`create_knowledge_graph.py`) to create the
+knowledge graph.
 
 ## Ontology mapping
 
 <!-- TODO doc links -->
 
-In addition, we use the information to create an [ontology mapping]() in the
-`schema_config.yaml` file, which reflect the ontological grounding of the data.
-Since CollecTRI deals with transcriptional regulation in a gene-gene context, we
-only need to define `gene` nodes and some regulatory interaction between them.
-For this simple case, we resort to the shallow default ontology,
+In addition, we use the information to create an [ontology
+mapping](https://biocypher.org/tutorial-ontology.html#using-ontologies-plain-biolink)
+in the `schema_config.yaml` file, which reflect the ontological grounding of the
+data.  Since CollecTRI deals with transcriptional regulation in a gene-gene
+context, we only need to define `gene` nodes and some regulatory interaction
+between them.  For this simple case, we resort to the shallow default ontology,
 [Biolink](https://bioportal.bioontology.org/ontologies/BIOLINK?p=classes&conceptid=root),
 which already contains Gene entities and regulatory relationships. This also
 means we do not need to specify the ontology in the `biocypher_config.yaml`
@@ -95,25 +140,29 @@ file, as Biolink is the default.
 
 We use the existing entity type `gene`, and we extend the existing `pairwise
 gene to gene association` relationship to `transcriptional regulation` using
-[inheritance](). For clarity, we also introduce a `transcription factor` entity
-type, which inherits from `gene`; this way, we can query for transcription
-factors specifically while retaining the ability to query for all genes.
+[inheritance](https://biocypher.org/tutorial-ontology.html#model-extensions).
+For clarity, we also introduce a `transcription factor` entity type, which
+inherits from `gene`; this way, we can query for transcription factors
+specifically while retaining the ability to query for all genes.
 
 ```yaml
 gene:
     represented_as: node
-    preferred_id: uniprot
-    input_label: gene
+    preferred_id: hgnc.symbol
 
 transcription factor:
     is_a: gene
     represented_as: node
-    input_label: tf
+    preferred_id: hgnc.symbol
 
 transcriptional regulation:
-    is_a: pairwise gene to gene association
+    is_a: pairwise gene to gene interaction
     represented_as: edge
     source: transcription factor
     target: gene
-    input_label: regulates
 ```
+
+Note that, since we pass `BioCypherNode` and `BioCypherEdge` objects to the
+BioCypher instance, which already include the correct labels of the ontology
+classes we map to (`gene`, `transcription factor`, and `transcriptional
+regulation`), we do not need to specify the `input_label` fields of each class.

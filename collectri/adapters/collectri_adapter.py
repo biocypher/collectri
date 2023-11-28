@@ -167,25 +167,25 @@ class CollectriAdapter:
             properties = {}
 
             if (
-                CollectriAdapterTranscriptionalRegulationEdgeField.WEIGHT.value
+                CollectriAdapterTranscriptionalRegulationEdgeField.WEIGHT
                 in self.edge_fields
             ):
                 properties["weight"] = row["weight"]
 
             if (
-                CollectriAdapterTranscriptionalRegulationEdgeField.RESOURCES.value
+                CollectriAdapterTranscriptionalRegulationEdgeField.RESOURCES
                 in self.edge_fields
             ):
                 properties["resources"] = row["resources"]
 
             if (
-                CollectriAdapterTranscriptionalRegulationEdgeField.REFERENCES.value
+                CollectriAdapterTranscriptionalRegulationEdgeField.REFERENCES
                 in self.edge_fields
             ):
                 properties["references"] = row["PMID"]
 
             if (
-                CollectriAdapterTranscriptionalRegulationEdgeField.SIGN_DECISION.value
+                CollectriAdapterTranscriptionalRegulationEdgeField.SIGN_DECISION
                 in self.edge_fields
             ):
                 properties["sign_decision"] = row["sign.decision"]
@@ -223,11 +223,7 @@ class CollectriAdapter:
             self.node_fields = node_fields
         else:
             self.node_fields = [
-                field
-                for field in chain(
-                    CollectriAdapterTranscriptionFactorField,
-                    CollectriAdapterTranscriptionalRegulationEdgeField,
-                )
+                field for field in CollectriAdapterTranscriptionFactorField
             ]
 
         if edge_types:
@@ -238,7 +234,9 @@ class CollectriAdapter:
         if edge_fields:
             self.edge_fields = edge_fields
         else:
-            self.edge_fields = [field for field in chain()]
+            self.edge_fields = [
+                field for field in CollectriAdapterTranscriptionalRegulationEdgeField
+            ]
 
     @lru_cache(maxsize=None)
     def _prefix(self, string):

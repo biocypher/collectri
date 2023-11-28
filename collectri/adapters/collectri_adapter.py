@@ -118,13 +118,19 @@ class CollectriAdapter:
 
         for node_id in self.genes:
             yield BioCypherNode(
-                node_id=self._prefix(node_id), node_label="gene", properties={}
+                node_id=self._prefix(node_id),
+                node_label="gene",
+                properties={
+                    "name": node_id,
+                },
             )
 
         for _, row in self.tf_df.iterrows():
             node_id = row["source"]
             category = row["TF.category"]
-            properties = {}
+            properties = {
+                "name": node_id,
+            }
             properties["category"] = (
                 "DNA-binding"
                 if category == "dbTF"

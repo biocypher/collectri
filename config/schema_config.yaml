@@ -1,12 +1,15 @@
 gene:
     represented_as: node
     preferred_id: hgnc.symbol
+    properties:
+        name: str
 
 transcription factor:
     is_a: gene
     represented_as: node
     preferred_id: hgnc.symbol
     properties:
+        name: str
         category: str
 
 transcriptional regulation:

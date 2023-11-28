@@ -2,6 +2,12 @@ from biocypher import BioCypher, Resource
 from collectri.adapters.collectri_adapter import CollectriAdapter
 
 # ----------------------
+# Setup: Should optional steps be run?
+# ----------------------
+
+RUN_OPTIONAL_STEPS = True
+
+# ----------------------
 # Step 1: Data download and cache
 # ----------------------
 
@@ -18,11 +24,12 @@ paths = bc.download(collectri)
 # Optional: Inspect data
 # ----------------------
 
-import pandas as pd
+if RUN_OPTIONAL_STEPS:
+    import pandas as pd
 
-df = pd.read_csv(paths[0])
-print(df.head())
-print(df.columns)
+    df = pd.read_csv(paths[0])
+    print(df.head())
+    print(df.columns)
 
 # ----------------------
 # Step 2: Load and configure adapter
@@ -34,16 +41,17 @@ adapter = CollectriAdapter(paths[0])
 # Optional: For prototyping, we can use the Pandas functionality
 # ----------------------
 
-bc.add(adapter.get_nodes())
-bc.add(adapter.get_edges())
-dfs = bc.to_df()
-for name, df in dfs.items():
-    print(name)
-    print(df.head())
+if RUN_OPTIONAL_STEPS:
+    bc.add(adapter.get_nodes())
+    bc.add(adapter.get_edges())
+    dfs = bc.to_df()
+    for name, df in dfs.items():
+        print(name)
+        print(df.head())
 
-bc = BioCypher()
-# reset BioCypher, otherwise we would deduplicate all entities from previous run
-# this is not needed if this optional step is skipped/removed
+    bc = BioCypher()
+    # Reset BioCypher, otherwise we would deduplicate all entities from previous
+    # run. This is not needed if this optional step is skipped/removed.
 
 # ----------------------
 # Step 3: Write nodes and edges, import call, and summarise the run

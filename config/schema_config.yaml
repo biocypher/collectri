@@ -18,7 +18,7 @@ transcriptional regulation:
     source: transcription factor
     target: gene
     properties:
-        weight: float
+        activation_or_inhibition: str
         resources: str
         references: str
         sign_decision: str

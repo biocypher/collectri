@@ -225,3 +225,8 @@ symbol without added prefix (which usually is good practice to ensure uniqueness
 of identifiers, in this case the `hgnc.symbol`). This way, we (and the LLM) can
 use the `name` property to refer to genes by their symbol, e.g., `MYC` instead
 of `hgnc.symbol:MYC`.
+
+We also rename `weight` to `activation_or_inhibition`, since it is a binary
+attribute that only has two values, `1` and `-1`, which we also modify to become
+a string with the categories `activation` and `inhibition`. This makes the
+attribute more intuitive to human and LLM users.

@@ -170,7 +170,9 @@ class CollectriAdapter:
                 CollectriAdapterTranscriptionalRegulationEdgeField.WEIGHT
                 in self.edge_fields
             ):
-                properties["weight"] = row["weight"]
+                properties["activation_or_inhibition"] = (
+                    "activation" if row["weight"] > 0 else "inhibition"
+                )
 
             if (
                 CollectriAdapterTranscriptionalRegulationEdgeField.RESOURCES

@@ -6,9 +6,16 @@ transcription factor:
     is_a: gene
     represented_as: node
     preferred_id: hgnc.symbol
+    properties:
+        category: str
 
 transcriptional regulation:
     is_a: pairwise gene to gene interaction
     represented_as: edge
     source: transcription factor
     target: gene
+    properties:
+        weight: float
+        resources: str
+        references: str
+        sign_decision: str

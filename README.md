@@ -146,7 +146,10 @@ downstream tasks. We have two node types, `gene` and `transcription factor`, and
 one relationship type, `transcriptional regulation`. We also define the
 properties of the nodes and edges, which are none for genes, `category` for
 transcription factors, and `weight`, `resources`, `references`, and
-`sign.decision` for the relationship.
+`sign_decision` for the relationship. (Note that we rename some of the original
+attributes to make them more intuitive, e.g., `PMID` to `references`, or
+machine-compatible, e.g., `sign.decision` to `sign_decision`. This conversion is
+handled by the adapter and needs to be reflected in our schema configuration.)
 
 The adapter then uses the `pandas` library to read the dataset and extract the
 relevant information. We use the `_preprocess_data()` method to load the

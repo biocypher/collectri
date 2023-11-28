@@ -161,25 +161,25 @@ class CollectriAdapter:
             properties = {}
 
             if (
-                CollectriAdapterTranscriptionalRegulationEdgeField.WEIGHT
+                CollectriAdapterTranscriptionalRegulationEdgeField.WEIGHT.value
                 in self.edge_fields
             ):
                 properties["weight"] = row["weight"]
 
             if (
-                CollectriAdapterTranscriptionalRegulationEdgeField.RESOURCES
+                CollectriAdapterTranscriptionalRegulationEdgeField.RESOURCES.value
                 in self.edge_fields
             ):
                 properties["resources"] = row["resources"]
 
             if (
-                CollectriAdapterTranscriptionalRegulationEdgeField.REFERENCES
+                CollectriAdapterTranscriptionalRegulationEdgeField.REFERENCES.value
                 in self.edge_fields
             ):
                 properties["references"] = row["PMID"]
 
             if (
-                CollectriAdapterTranscriptionalRegulationEdgeField.SIGN_DECISION
+                CollectriAdapterTranscriptionalRegulationEdgeField.SIGN_DECISION.value
                 in self.edge_fields
             ):
                 properties["sign_decision"] = row["sign.decision"]

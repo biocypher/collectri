@@ -188,20 +188,40 @@ specifically while retaining the ability to query for all genes.
 gene:
     represented_as: node
     preferred_id: hgnc.symbol
+    properties:
+        name: str
 
 transcription factor:
     is_a: gene
     represented_as: node
     preferred_id: hgnc.symbol
+    properties:
+        name: str
+        category: str
 
 transcriptional regulation:
     is_a: pairwise gene to gene interaction
     represented_as: edge
     source: transcription factor
     target: gene
+    properties:
+        weight: float
+        resources: str
+        references: str
+        sign_decision: str
 ```
 
 Note that, since we pass `BioCypherNode` and `BioCypherEdge` objects to the
 BioCypher instance, which already include the correct labels of the ontology
 classes we map to (`gene`, `transcription factor`, and `transcriptional
 regulation`), we do not need to specify the `input_label` fields of each class.
+
+We do, however, add some optional components to the schema configuration, mainly
+to make interaction with the LLM framework BioChatter easier. For instance, we
+provide explicit `properties` for each class, which are used to generate the
+`schema_info.yaml` file, an extended schema configuration for BioChatter
+integration. We also include the `name` property as a shortcut to the gene
+symbol without added prefix (which usually is good practice to ensure uniqueness
+of identifiers, in this case the `hgnc.symbol`). This way, we (and the LLM) can
+use the `name` property to refer to genes by their symbol, e.g., `MYC` instead
+of `hgnc.symbol:MYC`.

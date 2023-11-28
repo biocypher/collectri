@@ -93,6 +93,9 @@ instance to be accessed on https://localhost:8501. In the `Knowledge Graph` tab,
 you can use natural language queries to generate Cypher queries and run them on
 the graph. For connecting, you need to change the Neo4j host IP from `localhost`
 to `deploy`, which is the name of the Docker service running the Neo4j instance.
+You should be able to answer questions like "Which transcription factors
+activate TP53?", "Which genes are regulated by transcription factors starting
+with 'ZNF'?", or "Which are DNA-binding transcription factors?"
 
 ```bash
 docker compose -f docker-compose-chatgse.yaml up -d

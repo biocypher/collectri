@@ -78,6 +78,42 @@ bc.write_import_call()
 bc.summary()
 ```
 
+5. Run Docker compose to deploy the knowledge graph. Running the standard
+`docker-compose.yaml` configuration will build the graph, import it into Neo4j,
+and deploy a Neo4j instance to be accessed on https://localhost:7474. The graph
+can then be browsed and queried.
+
+```bash
+docker compose up -d
+```
+
+You can also include the ChatGSE frontend in the deployment by running the
+`docker-compose-chatgse.yaml` configuration. This will also deploy a ChatGSE
+instance to be accessed on https://localhost:8501. In the `Knowledge Graph` tab,
+you can use natural language queries to generate Cypher queries and run them on
+the graph. For connecting, you need to change the Neo4j host IP from `localhost`
+to `deploy`, which is the name of the Docker service running the Neo4j instance.
+
+```bash
+docker compose -f docker-compose-chatgse.yaml up -d
+```
+
+To stop the deployment, run
+
+```bash
+docker compose down --volumes
+```
+
+or
+
+```bash
+docker compose -f docker-compose-chatgse.yaml down --volumes
+```
+
+Removing the volumes is necessary to ensure a clean deployment when running
+`docker compose up` again. Otherwise, the graph will contain duplicate nodes and
+edges.
+
 ## Adapter design
 
 We can look at the downloaded dataset (using the path from the previous step) to

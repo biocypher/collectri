@@ -54,8 +54,9 @@ bc.write_edges(adapter.get_edges())
 
 # TODO preferred_id is not reflected in the output
 
-# Write admin import statement
+# Write admin import statement and schema information (for biochatter)
 bc.write_import_call()
+bc.write_schema_info(as_node=True)
 
 # Print summary
 bc.summary()

@@ -110,7 +110,7 @@ docker compose down --volumes
 or
 
 ```bash
-docker compose -f docker-compose-chatgse.yaml down --volumes
+docker compose -f docker-compose-chatgse.yml down --volumes
 ```
 
 Removing the volumes is necessary to ensure a clean deployment when running

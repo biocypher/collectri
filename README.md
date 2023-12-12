@@ -98,7 +98,7 @@ activate TP53?", "Which genes are regulated by transcription factors starting
 with 'ZNF'?", or "Which are DNA-binding transcription factors?"
 
 ```bash
-docker compose -f docker-compose-chatgse.yaml up -d
+docker compose -f docker-compose-chatgse.yml up -d
 ```
 
 To stop the deployment, run

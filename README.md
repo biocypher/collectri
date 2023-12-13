@@ -80,7 +80,7 @@ bc.summary()
 
 5. Run Docker compose to deploy the knowledge graph. Running the standard
 `docker-compose.yaml` configuration will build the graph, import it into Neo4j,
-and deploy a Neo4j instance to be accessed on https://localhost:7474. The graph
+and deploy a Neo4j instance to be accessed on [https://localhost:7474](http://localhost:7474/browser/). The graph
 can then be browsed and queried.
 
 ```bash

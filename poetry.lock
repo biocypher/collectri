@@ -13,13 +13,13 @@ files = [
 
 [[package]]
 name = "biocypher"
-version = "0.6.0"
+version = "0.6.1"
 description = "A unifying framework for biomedical research knowledge graphs"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "biocypher-0.6.0-py3-none-any.whl", hash = "sha256:a3685c736c5505c588deb22c1bcdb7b7d90ea41cead8be4ae9969a09bef0fbd6"},
-    {file = "biocypher-0.6.0.tar.gz", hash = "sha256:b72a2ac70414c893cc85e28d50b4342774b727c7db1e2ef65e82ffdd578f5b40"},
+    {file = "biocypher-0.6.1-py3-none-any.whl", hash = "sha256:0809ca484fef5493121468d4ee144290c397636d9d91d5b0fb774baa3d60fbe5"},
+    {file = "biocypher-0.6.1.tar.gz", hash = "sha256:16e698800332deecc2b10a1a23986575c2c7ec9f7cca4f0ce6eb7bd14399416c"},
 ]
 
 [package.dependencies]
@@ -712,4 +712,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "f451a70da385a8e4f99c26ce83276dca3d45f787a36c3504d7b7e89f61a2832f"
+content-hash = "be44fd124bf6f1dfd3a206d5c91827429cb68359078f6cca28f5a5f180394b4d"

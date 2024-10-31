@@ -1,4 +1,4 @@
-from biocypher import BioCypher, Resource
+from biocypher import BioCypher, FileDownload
 from collectri.adapters.collectri_adapter import CollectriAdapter
 
 # ----------------------
@@ -12,7 +12,7 @@ RUN_OPTIONAL_STEPS = True
 # ----------------------
 
 bc = BioCypher()
-collectri = Resource(
+collectri = FileDownload(
     name="collectri",
     url_s="https://rescued.omnipathdb.org/CollecTRI.csv",
     lifetime=0,  # CollecTRI is a static resource

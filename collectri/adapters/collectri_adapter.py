@@ -1,9 +1,6 @@
 from functools import lru_cache
 import hashlib
-import random
-import string
 from enum import Enum, auto
-from itertools import chain
 from typing import Optional
 import pandas as pd
 from biocypher._logger import logger
@@ -120,6 +117,7 @@ class CollectriAdapter:
             yield BioCypherNode(
                 node_id=self._prefix(node_id),
                 node_label="gene",
+                preferred_id="hgnc.symbol",
                 properties={
                     "name": node_id,
                 },
@@ -134,15 +132,16 @@ class CollectriAdapter:
             properties["category"] = (
                 "DNA-binding"
                 if category == "dbTF"
-                else "co-regulatory"
-                if category == "coTF"
-                else "general initiation"
-                if category == "GTF"
-                else None
+                else (
+                    "co-regulatory"
+                    if category == "coTF"
+                    else "general initiation" if category == "GTF" else None
+                )
             )
 
             yield BioCypherNode(
                 node_id=self._prefix(node_id),
+                preferred_id="hgnc.symbol",
                 node_label="transcription factor",
                 properties=properties,
             )

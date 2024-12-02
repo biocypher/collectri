@@ -27,7 +27,8 @@ https://rescued.omnipathdb.org/CollecTRI.csv. With this link, we can set up a
 BioCypher `Resource` object to [download and cache the
 data](https://biocypher.org/api.html#download-and-cache-functionality). We
 implement this and all other steps of the build pipeline in the
-`create_knowledge_graph.py` script. Check there for the full code.
+[create_knowledge_graph.py](create_knowledge_graph.py) create script. Check
+there for the full code.
 
 ```python
 bc = BioCypher()
@@ -39,12 +40,12 @@ collectri = Resource(
 paths = bc.download(collectri)
 ```
 
-3. Adjust the adapter based on the contents of the dataset. This is the most
+3. Adjust the [adapter](collectri/adapters/collectri_adapter.py) based on the contents of the dataset. This is the most
 labour-intensive step, as it involves systematising the dataset and mapping it
 to a suitable ontology, as well as designing the ETL (extract-transform-load)
 process in the adapter module. The CollecTRI dataset is comparatively simple,
 which makes it a good example. You can find a detailed description of the
-process [below](#adapter-design) ([adapter design](#adapter-design) and [ontolgy
+process [below](#adapter-design) ([adapter design](#adapter-design) and [ontology
 mapping](#ontology-mapping)).
 
 When building the adapter, it can be helpful to use the Pandas functionality of

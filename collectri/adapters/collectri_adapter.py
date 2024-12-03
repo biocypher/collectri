@@ -60,7 +60,8 @@ class CollectriAdapter:
     creating a knowledge graph. Performs preprocessing of the data to extract
     genes, transcription factors, and relationships at initialisation. Yields
     nodes and edges at query time using the public methods `get_nodes()` and
-    `get_edges()`.
+    `get_edges()`. Node and edge types and fields can be specified by selecting
+    from the corresponding enums.
 
     Args:
         node_types: List of node types to include in the result.

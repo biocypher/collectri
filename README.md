@@ -81,7 +81,7 @@ bc.summary()
 
 5. Run Docker compose to deploy the knowledge graph. Running the standard
 `docker-compose.yaml` configuration will build the graph, import it into Neo4j,
-and deploy a Neo4j instance to be accessed on https://localhost:7474. The graph
+and deploy a Neo4j instance to be accessed on [https://localhost:7474](http://localhost:7474/browser/). The graph
 can then be browsed and queried.
 
 ```bash
@@ -99,7 +99,7 @@ activate TP53?", "Which genes are regulated by transcription factors starting
 with 'ZNF'?", or "Which are DNA-binding transcription factors?"
 
 ```bash
-docker compose -f docker-compose-chatgse.yaml up -d
+docker compose -f docker-compose-chatgse.yml up -d
 ```
 
 To stop the deployment, run
@@ -111,7 +111,7 @@ docker compose down --volumes
 or
 
 ```bash
-docker compose -f docker-compose-chatgse.yaml down --volumes
+docker compose -f docker-compose-chatgse.yml down --volumes
 ```
 
 Removing the volumes is necessary to ensure a clean deployment when running

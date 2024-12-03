@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "collectri"
-version = "0.2.1"
+version = "0.2.2"
 description = "CollecTRI adapter for BioCypher"
 authors = [
     "Sebastian Lobentanzer <sebastian.lobentanzer@gmail.com>",

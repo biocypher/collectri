@@ -1,10 +1,9 @@
 from functools import lru_cache
 import hashlib
 from enum import Enum, auto
-from typing import Optional
+from typing import Optional, Generator
 import pandas as pd
 from biocypher._logger import logger
-from biocypher._create import BioCypherNode, BioCypherEdge
 
 logger.debug(f"Loading module {__name__}.")
 
@@ -37,7 +36,7 @@ class CollectriAdapterTranscriptionFactorField(Enum):
 
 class CollectriAdapterEdgeType(Enum):
     """
-    Enum for the types of the protein adapter.
+    Define types of edges the adapter can provide.
     """
 
     TRANSCRIPTIONAL_REGULATION = "regulates"
@@ -45,7 +44,8 @@ class CollectriAdapterEdgeType(Enum):
 
 class CollectriAdapterTranscriptionalRegulationEdgeField(Enum):
     """
-    Define possible fields the adapter can provide for protein-protein edges.
+    Define possible fields the adapter can provide for transcriptional
+    regulation edges.
     """
 
     WEIGHT = "weight"
@@ -56,8 +56,11 @@ class CollectriAdapterTranscriptionalRegulationEdgeField(Enum):
 
 class CollectriAdapter:
     """
-    Example BioCypher adapter. Generates nodes and edges for creating a
-    knowledge graph.
+    BioCypher adapter for the CollecTRI resource. Generates nodes and edges for
+    creating a knowledge graph. Performs preprocessing of the data to extract
+    genes, transcription factors, and relationships at initialisation. Yields
+    nodes and edges at query time using the public methods `get_nodes()` and
+    `get_edges()`.
 
     Args:
         node_types: List of node types to include in the result.
@@ -83,7 +86,7 @@ class CollectriAdapter:
         )
         self._preprocess_data()
 
-    def _preprocess_data(self):
+    def _preprocess_data(self) -> None:
         """
         Load the data from the given CSV and extract genes, transcription
         factors, and relationships.
@@ -100,36 +103,33 @@ class CollectriAdapter:
         # the `TF.category` column)
         self.tf_df = self.data[["source", "TF.category"]].drop_duplicates()
 
-    def get_nodes(self):
+    def get_nodes(self) -> Generator[tuple[str, str, dict], None, None]:
         """
-
-        Returns a generator of BioCypher node objects for node types specified
+        Returns a generator of tuples (three-element) for node types specified
         in the adapter constructor.
 
         Returns:
-            Generator of BioCypher node objects.
-
+            Generator of three-element tuples (node_id, node_label,
+                node_properties).
         """
 
         logger.info("Generating nodes.")
 
         for node_id in self.genes:
-            yield BioCypherNode(
-                node_id=self._prefix(node_id),
-                node_label="gene",
-                preferred_id="hgnc.symbol",
-                properties={
-                    "name": node_id,
-                },
-            )
+            _id = self._prefix(node_id)
+            _label = "gene"
+            _properties = {
+                "name": node_id,
+            }
+            yield _id, _label, _properties
 
         for _, row in self.tf_df.iterrows():
             node_id = row["source"]
             category = row["TF.category"]
-            properties = {
+            _properties = {
                 "name": node_id,
             }
-            properties["category"] = (
+            _properties["category"] = (
                 "DNA-binding"
                 if category == "dbTF"
                 else (
@@ -138,20 +138,21 @@ class CollectriAdapter:
                     else "general initiation" if category == "GTF" else None
                 )
             )
+            
+            _id = self._prefix(node_id)
+            _label = "transcription factor"
 
-            yield BioCypherNode(
-                node_id=self._prefix(node_id),
-                preferred_id="hgnc.symbol",
-                node_label="transcription factor",
-                properties=properties,
-            )
+            yield _id, _label, _properties
 
-    def get_edges(self):
+    def get_edges(self) -> Generator[tuple[str, str, str, str, dict], None, None]:
         """
 
-        Returns a generator of BioCypher edge objects (optionally
-        BioCypherRelAsNode) for edge types specified in the adapter constructor.
+        Returns a generator of tuples (five-element) for edge types specified
+        in the adapter constructor.
 
+        Returns:
+            Generator of five-element tuples (relationship_id, source_id,
+                target_id, relationship_label, relationship_properties).
         """
 
         logger.info("Generating edges.")
@@ -192,21 +193,17 @@ class CollectriAdapter:
                 properties["sign_decision"] = row["sign.decision"]
 
             # generate relationship id
-            md5 = hashlib.md5(
+            md5_relationship_id = hashlib.md5(
                 "".join(
                     [str(source_id), str(target_id)]
                     + [str(prop) for prop in properties.values()]
                 ).encode("utf-8")
             ).hexdigest()
+            source_id = self._prefix(source_id)
+            target_id = self._prefix(target_id)
+            relationship_label = "transcriptional regulation"
 
-            # generate edge
-            yield BioCypherEdge(
-                relationship_id=md5,
-                source_id=self._prefix(source_id),
-                target_id=self._prefix(target_id),
-                relationship_label="transcriptional regulation",
-                properties=properties,
-            )
+            yield md5_relationship_id, source_id, target_id, relationship_label, properties
 
     def _set_types_and_fields(
         self,
@@ -215,6 +212,17 @@ class CollectriAdapter:
         edge_types,
         edge_fields,
     ):
+        """
+        Allow the user of the adapter to specify the node and edge types and
+        fields to include in the adapter output. By default returns all nodes
+        and edges. The types and fields are specified as lists of enums.
+
+        Args:
+            node_types: List of node types to include in the result.
+            node_fields: List of node fields to include in the result.
+            edge_types: List of edge types to include in the result.
+            edge_fields: List of edge fields to include in the result.
+        """
         if node_types:
             self.node_types = node_types
         else:

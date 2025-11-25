@@ -1,0 +1,173 @@
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "sc": "https://schema.org/",
+    "cr": "http://mlcommons.org/croissant/",
+    "rai": "http://mlcommons.org/croissant/RAI/",
+    "dct": "http://purl.org/dc/terms/",
+    "citeAs": "cr:citeAs",
+    "column": "cr:column",
+    "conformsTo": "dct:conformsTo",
+    "data": {
+      "@id": "cr:data",
+      "@type": "@json"
+    },
+    "dataType": {
+      "@id": "cr:dataType",
+      "@type": "@vocab"
+    },
+    "examples": {
+      "@id": "cr:examples",
+      "@type": "@json"
+    },
+    "extract": "cr:extract",
+    "field": "cr:field",
+    "fileProperty": "cr:fileProperty",
+    "fileObject": "cr:fileObject",
+    "fileSet": "cr:fileSet",
+    "format": "cr:format",
+    "includes": "cr:includes",
+    "isLiveDataset": "cr:isLiveDataset",
+    "jsonPath": "cr:jsonPath",
+    "key": "cr:key",
+    "md5": "cr:md5",
+    "parentField": "cr:parentField",
+    "path": "cr:path",
+    "recordSet": "cr:recordSet",
+    "references": "cr:references",
+    "regex": "cr:regex",
+    "repeated": "cr:repeated",
+    "replace": "cr:replace",
+    "separator": "cr:separator",
+    "source": "cr:source",
+    "subField": "cr:subField",
+    "transform": "cr:transform",
+    "wd": "https://www.wikidata.org/wiki/"
+  },
+
+  "@type": "sc:Dataset",
+  "dct:conformsTo": "http://mlcommons.org/croissant/1.0",
+  "name": "Collectri",
+  "description": "Adapter integrating the CollecTRI resource into BioCypher, converting multi-omics and regulatory interaction data into standardized graph representations.",
+  "version": "0.0.1",
+  "license": "https://opensource.org/licenses/MIT",
+  "url": "https://github.com/biocypher/collectri",
+  "keywords": ["multi-omics", "regulatory interactions"],
+  "datePublished": "2024-05-12",
+  "creator": [
+    {
+      "@type": "sc:Person",
+      "name": "Sebastian Lobentanzer",
+      "affiliation": "Helmholtz Munich",
+      "identifier": "https://orcid.org/0000-0003-3399-6695"
+    }
+  ],
+  "citeAs": "This adapter was developed by Sebastian Lobentanzer to load and transform the Collectri dataset. For dataset citation, refer to: https://doi.org/10.1093/nar/gkad841.",
+  "conformsTo": "http://mlcommons.org/croissant/1.0",
+  "distribution": [
+    {
+      "@type": "cr:FileObject",
+      "@id": "collectri.csv",
+      "name": "CollecTRI.csv",
+      "contentUrl": "https://rescued.omnipathdb.org/CollecTRI.csv",
+      "encodingFormat": "text/csv",
+      "sha256": "86c90b30f2cc75c189da1f0a8c353d1547287cd656a9fac1c678634285bcb4e0"
+    }
+  ],
+  "recordSet": [
+    {
+      "@type": "cr:RecordSet",
+      "@id": "collectri",
+      "name": "CollecTRI",
+      "description": "Transcription factor → target gene regulatory interactions with supporting evidence.",
+
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "collectri/source",
+          "name": "source",
+          "description": "Gene symbol of transcription factor (TF).",
+          "dataType": "sc:Text",
+          "examples": ["MYC"],
+          "source": {
+            "fileObject": { "@id": "collectri.csv" },
+            "extract": { "column": "source" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "collectri/target",
+          "name": "target",
+          "description": "Gene symbol of the regulated target gene.",
+          "dataType": "sc:Text",
+          "examples": ["TERT"],
+          "source": {
+            "fileObject": { "@id": "collectri.csv" },
+            "extract": { "column": "target" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "collectri/weight",
+          "name": "weight",
+          "description": "Binary indicator of confidence (1 = supported interaction).",
+          "dataType": "sc:Integer",
+          "examples": [1],
+          "source": {
+            "fileObject": { "@id": "collectri.csv" },
+            "extract": { "column": "weight" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "collectri/tf_category",
+          "name": "TF.category",
+          "description": "Category of transcription factor.",
+          "dataType": "sc:Text",
+          "examples": ["dbTF"],
+          "source": {
+            "fileObject": { "@id": "collectri.csv" },
+            "extract": { "column": "TF.category" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "collectri/resources",
+          "name": "resources",
+          "description": "List of supporting data sources (semicolon-separated).",
+          "dataType": "sc:Text",
+          "examples": ["ExTRI;HTRI;TRRUST"],
+          "source": {
+            "fileObject": { "@id": "collectri.csv" },
+            "extract": { "column": "resources" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "collectri/pmid",
+          "name": "PMID",
+          "description": "PubMed references (semicolon-separated).",
+          "dataType": "sc:Text",
+          "examples": ["10022128;10491298"],
+          "source": {
+            "fileObject": { "@id": "collectri.csv" },
+            "extract": { "column": "PMID" }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "collectri/sign_decision",
+          "name": "sign.decision",
+          "description": "Determination method for activation/inhibition sign.",
+          "dataType": "sc:Text",
+          "examples": ["PMID"],
+          "source": {
+            "fileObject": { "@id": "collectri.csv" },
+            "extract": { "column": "sign.decision" }
+          }
+        }
+      ]
+    }
+  ]
+}

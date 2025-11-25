@@ -234,3 +234,14 @@ We also rename `weight` to `activation_or_inhibition`, since it is a binary
 attribute that only has two values, `1` and `-1`, which we also modify to become
 a string with the categories `activation` and `inhibition`. This makes the
 attribute more intuitive to human and LLM users.
+
+
+## Validate Croissant schema
+
+1. activate the environment and execute the following command:
+```bash
+
+mlcroissant validate --jsonld croissant.jsonld
+```
+
+2. If the command execute without problems, it should prompt the word "Done".

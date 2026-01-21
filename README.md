@@ -212,20 +212,15 @@ transcriptional regulation:
     target: gene
     input_label: transcriptional regulation
     properties:
-        weight: float
+        activation_or_inhibition: str
         resources: str
         references: str
         sign_decision: str
 ```
 
-Note that, since we pass `BioCypherNode` and `BioCypherEdge` objects to the
-BioCypher instance, which already include the correct labels of the ontology
-classes we map to (`gene`, `transcription factor`, and `transcriptional
-regulation`), we do not need to specify the `input_label` fields of each class.
-
-We do, however, add some optional components to the schema configuration, mainly
-to make interaction with the LLM framework BioChatter easier. For instance, we
-provide explicit `properties` for each class, which are used to generate the
+We add some optional components to the schema configuration, mainly to make
+interaction with the LLM framework BioChatter easier. For instance, we provide
+explicit `properties` for each class, which are used to generate the
 `schema_info.yaml` file, an extended schema configuration for BioChatter
 integration. We also include the `name` property as a shortcut to the gene
 symbol without added prefix (which usually is good practice to ensure uniqueness

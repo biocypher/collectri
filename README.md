@@ -192,6 +192,7 @@ specifically while retaining the ability to query for all genes.
 gene:
     represented_as: node
     preferred_id: hgnc.symbol
+    input_label: gene
     properties:
         name: str
 
@@ -199,6 +200,7 @@ transcription factor:
     is_a: gene
     represented_as: node
     preferred_id: hgnc.symbol
+    input_label: transcription factor
     properties:
         name: str
         category: str
@@ -208,6 +210,7 @@ transcriptional regulation:
     represented_as: edge
     source: transcription factor
     target: gene
+    input_label: transcriptional regulation
     properties:
         weight: float
         resources: str

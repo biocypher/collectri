@@ -63,7 +63,7 @@
     "identifier": "https://orcid.org/0000-0003-3399-6695"
   },
   "keywords": [
-    "regulatory interactions", "transcription factors"
+    "gene regulatory network", "molecular interactions", "regulatory interactions", "transcription factors"
   ],
   "citeAs": "This adapter was developed by Sebastian Lobentanzer to load and transform the CollecTRI dataset.",
   "hasPart": {
@@ -75,7 +75,7 @@
     "license": "https://github.com/saezlab/CollecTRI/blob/main/LICENSE",
     "url": "https://github.com/saezlab/CollecTRI",
     "keywords": [
-      "regulatory interactions", "transcription factors"
+      "gene regulatory network", "molecular interactions", "regulatory interactions", "transcription factors" 
     ],
     "datePublished": "2023-10-16",
     "creator": [

@@ -81,7 +81,7 @@ bc.summary()
 
 5. Run Docker compose to deploy the knowledge graph. Running the standard
 `docker-compose.yaml` configuration will build the graph, import it into Neo4j,
-and deploy a Neo4j instance to be accessed on https://localhost:7474. The graph
+and deploy a Neo4j instance to be accessed on [https://localhost:7474](http://localhost:7474/browser/). The graph
 can then be browsed and queried.
 
 ```bash
@@ -99,7 +99,7 @@ activate TP53?", "Which genes are regulated by transcription factors starting
 with 'ZNF'?", or "Which are DNA-binding transcription factors?"
 
 ```bash
-docker compose -f docker-compose-chatgse.yaml up -d
+docker compose -f docker-compose-chatgse.yml up -d
 ```
 
 To stop the deployment, run
@@ -111,7 +111,7 @@ docker compose down --volumes
 or
 
 ```bash
-docker compose -f docker-compose-chatgse.yaml down --volumes
+docker compose -f docker-compose-chatgse.yml down --volumes
 ```
 
 Removing the volumes is necessary to ensure a clean deployment when running
@@ -192,6 +192,7 @@ specifically while retaining the ability to query for all genes.
 gene:
     represented_as: node
     preferred_id: hgnc.symbol
+    input_label: gene
     properties:
         name: str
 
@@ -199,6 +200,7 @@ transcription factor:
     is_a: gene
     represented_as: node
     preferred_id: hgnc.symbol
+    input_label: transcription factor
     properties:
         name: str
         category: str
@@ -208,21 +210,17 @@ transcriptional regulation:
     represented_as: edge
     source: transcription factor
     target: gene
+    input_label: transcriptional regulation
     properties:
-        weight: float
+        activation_or_inhibition: str
         resources: str
         references: str
         sign_decision: str
 ```
 
-Note that, since we pass `BioCypherNode` and `BioCypherEdge` objects to the
-BioCypher instance, which already include the correct labels of the ontology
-classes we map to (`gene`, `transcription factor`, and `transcriptional
-regulation`), we do not need to specify the `input_label` fields of each class.
-
-We do, however, add some optional components to the schema configuration, mainly
-to make interaction with the LLM framework BioChatter easier. For instance, we
-provide explicit `properties` for each class, which are used to generate the
+We add some optional components to the schema configuration, mainly to make
+interaction with the LLM framework BioChatter easier. For instance, we provide
+explicit `properties` for each class, which are used to generate the
 `schema_info.yaml` file, an extended schema configuration for BioChatter
 integration. We also include the `name` property as a shortcut to the gene
 symbol without added prefix (which usually is good practice to ensure uniqueness
